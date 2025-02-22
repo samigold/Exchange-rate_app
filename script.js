@@ -6,9 +6,13 @@ const amountEl_two = document.getElementById('amount-two');
 const rateEl = document.getElementById('rate');
 const swap = document.getElementById('swap');
 
+const tradingview = document.getElementById('tradingview');
+
 
 //Fetch Exchange rates and update the DOM
 function calculate() {
+
+    
     const currency_one = currencyEl_one.value;
     const currency_two = currencyEl_two.value;
 
@@ -70,9 +74,39 @@ function handleOnline() {
     .then(data => {
         const userCountryCurrency = data.currency;
         currencyEl_two.value = userCountryCurrency;
+        loadTradingViewWidget(currencyEl_two.value);
         calculate();
     })
   }
+
+  function loadTradingViewWidget(currency) {
+    const tradingview = document.getElementById("tradingview"); // Ensure this element exists
+    tradingview.innerHTML = `
+        <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <div class="tradingview-widget-copyright">
+                <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
+                    <span class="blue-text">Track all markets on TradingView</span>
+                </a>
+            </div>
+        </div>
+    `;
+
+    const script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js";
+    script.async = true;
+    script.innerHTML = JSON.stringify({
+        "symbol": `FX:${currency}USD`,
+        "width": "100%",
+        "isTransparent": false,
+        "colorTheme": "dark",
+        "locale": "en"
+    });
+
+    tradingview.querySelector(".tradingview-widget-container").appendChild(script);
+}
+
 
 //Event listeners for network Changes
 window.addEventListener('offline', handleOffline);
@@ -83,6 +117,11 @@ currencyEl_one.addEventListener('change', calculate);
 amountEl_one.addEventListener('input', calculate);
 currencyEl_two.addEventListener('change', calculate);
 amountEl_two.addEventListener('input', calculate);
+// Call this function whenever the currency changes
+currencyEl_two.addEventListener('change', () => {
+    loadTradingViewWidget(currencyEl_two.value);
+});
+
 
 swap.addEventListener('click', () => {
     const temp = currencyEl_one.value;
@@ -91,5 +130,7 @@ swap.addEventListener('click', () => {
     calculate();
 })
 
+
+// Initial load
 userCountry();
 calculate();

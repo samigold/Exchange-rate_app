@@ -71,7 +71,6 @@ function handleOnline() {
         const userCountryCurrency = data.currency;
         currencyEl_two.value = userCountryCurrency;
         calculate();
-        console.log(options);
     })
   }
 

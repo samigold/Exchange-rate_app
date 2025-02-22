@@ -64,6 +64,17 @@ function handleOnline() {
     calculate();  // Recalculate and fetch rates when back online
   }
 
+  function userCountry() {
+    fetch('https://ipapi.co/json/')
+    .then(result => result.json())
+    .then(data => {
+        const userCountryCurrency = data.currency;
+        currencyEl_two.value = userCountryCurrency;
+        calculate();
+        console.log(options);
+    })
+  }
+
 //Event listeners for network Changes
 window.addEventListener('offline', handleOffline);
 window.addEventListener('online', handleOnline);
@@ -81,4 +92,5 @@ swap.addEventListener('click', () => {
     calculate();
 })
 
-calculate()
+userCountry();
+calculate();
